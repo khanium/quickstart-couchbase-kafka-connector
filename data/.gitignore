@@ -1,0 +1,6 @@
+.DS_Store
+db/couchbase/
+data/kafka-data/
+data/zk-data/
+data/zk-txn-logs/
+

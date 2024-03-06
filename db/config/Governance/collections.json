@@ -1,0 +1,14 @@
+{
+  "scopes": {
+    "tenant": {
+      "collections": [
+        "your_collection_name_1",
+        "your_collection_name_2",
+        "your_collection_name_3"
+      ]
+    },
+    "eventLoader": { "collections": ["eventType"]},
+    "processEngine": { "collections": ["workflow"]},
+    "enrichment": {"collections":  ["eventType"]}
+  }
+}

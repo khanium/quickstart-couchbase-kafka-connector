@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Historical",
+    "ramQuotaMB": 100,
+    "bucketType": "couchbase",
+    "authType": "sasl",
+    "saslPassword": "",
+    "evictionPolicy": "fullEviction",
+    "replicaNumber": 0,
+    "flushEnabled": 1
+  },
+  {
+    "name": "Governance",
+    "ramQuotaMB": 100,
+    "bucketType": "couchbase",
+    "authType": "sasl",
+    "saslPassword": "",
+    "evictionPolicy": "fullEviction",
+    "replicaNumber": 0,
+    "flushEnabled": 1
+  }
+]

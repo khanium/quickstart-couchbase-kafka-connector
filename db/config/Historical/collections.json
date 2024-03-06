@@ -1,0 +1,13 @@
+{
+  "scopes": {
+    "raw": {
+      "collections": [
+        "eventType1",
+        "eventType2",
+        "eventType3"
+      ]
+    },
+    "enriched": { "collections": ["eventTypeA"]},
+    "consolidated": {"collections": ["eventTypeB"]}
+  }
+}
