@@ -4,7 +4,6 @@ Docker Compose quick development starting kit for deploying Couchbase + Confluen
 ## Quick start with Confluent docker compose
 
 ```
-cd quickstart/cb-confluent-docker
 docker-compose up
 ```
 
