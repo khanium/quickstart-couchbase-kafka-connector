@@ -215,6 +215,15 @@ You can verify the created document in your Couchbase Cluster:
 
 ![Ingested Couchbase Document](doc/assets/ingestion.png)
 
+##### Troubleshooting
+Note: check out the charset and hiden characters when you copy/paste directly from this README. If you see an error like this one, try again typing it manually instead of copy/paste it:
+
+```
+org.apache.kafka.common.errors.SerializationException: Error deserializing json {�2"hello":�"world"} to Avro of schema {"type":"record","name":"random_record","fields":[{"name":"hello","type":"string"}]}
+	at io.confluent.kafka.formatter.AvroMessageReader.readFrom(AvroMessageReader.java:127)
+	at io.confluent.kafka.formatter.SchemaMessageReader.readMessage(SchemaMessageReader.java:405)
+``` 
+
 #### Java Random AVRO Generator Application Sample
   You can find a java random AVRO generator producer in the github [https://github.com/couchbaselabs/springboot-kafka-avro-producer](https://github.com/couchbaselabs/springboot-kafka-avro-producer) repository. By default, the AVRO Kafka Producer demo is using `src/main/resources/avro-schemas/OrderValue.avsc` avro schema to produce 20K documents into the Kafka localhost `raw-events` topic.
 

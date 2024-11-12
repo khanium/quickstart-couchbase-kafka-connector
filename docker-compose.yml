@@ -136,12 +136,11 @@ services:
                   "couchbase.bucket": "Historical",
                   "couchbase.username": "sink-user",
                   "couchbase.password": "password",
-                  "couchbase.persist.to": "NONE",
-                  "couchbase.replicate.to": "NONE",
-                  "key.converter": "org.apache.kafka.connect.storage.StringConverter",
-                  "value.converter": "io.confluent.connect.avro.AvroConverter",
+                  "couchbase.durability": "NONE",
+                  "key.converter": "$CONNECT_KEY_CONVERTER",
+                  "value.converter": "$CONNECT_VALUE_CONVERTER",
                   "value.converter.schemas.enable": "false" ,
-                  "value.converter.schema.registry.url": "http://schema-registry:8081"
+                  "value.converter.schema.registry.url": "$CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL"
         }'
         #
         sleep infinity
