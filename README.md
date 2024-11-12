@@ -76,6 +76,9 @@ Then, verify:
    3. Optional - you can skip the local couchbase container creation. If you want to remove/comment this couchbase image do not forget to remove it also from the dependencies from the connect container.  
 
 ## Encoders/Decoders
+Kafka messages are organized into topics. Each message is a key/value, but that is all that Kafka requires. Both key and value are just bytes when they are stored in Kafka. This makes Kafka applicable to a wide range of use cases, but it also means that developers have the responsibility of deciding how to serialize the data.
+
+In configuring Kafka Connect, one of the key things to standardize on is the serialization format. You need to make sure that anyone reading from the topic is using the same serialization format as those writing to the topic. Otherwise, confusion and errors will ensue!
 
 When working with encoded messages, the consumer must use the same schema when decoding a message that the producer used when encoding it. This could lead to difficulties in coordinating which schema was used for a given message.
 
@@ -83,8 +86,132 @@ To solve this problem, Kafka offers the Schema Registry, which allows you to spe
 
 ![Schema Registry](doc/assets/schema-registry.png)
 
+There are various serialization formats with common ones including:
+
+* JSON
+* Avro
+* Protobuf
+* String delimited (e.g., CSV)
+
+There are advantages and disadvantages to each of these—well, except delimited, in which case it’s only disadvantages 
+
+**If I write to my target in JSON, must I use JSON for my topics?**
+No, not at all. The format in which you’re reading data from a source, or writing it to an external data store, doesn’t need to have a bearing on the format you use to serialize your messages in Kafka.
+
+A connector in Kafka Connect is responsible for taking the data from the source data store (for example, a database) and passing it as an internal representation of the data to the converter. Kafka Connect’s converters then serialize this source data object onto the topic.
+
+The same happens in reverse when using Kafka Connect as a sink—the converter deserializes the data from the topic into this internal representation, which is passed to the connector to write to the target data store using the appropriate method specific to the target.
+
+What this means is that you can have data on a topic in Avro (for example), and when you come to write it to HDFS (for example), you simply specify that you want the sink connector to use that format.
+
+Remember, Kafka messages are just pairs of key/value bytes, and you need to specify the converter for both keys and value, using the key.converter and value.converter configuration setting. In some situations, you may use different converters for the key and the value.
+
+### Setup SinkConnector with Json Converter
+ For JSON, you need to specify if you want Kafka Connect to embed the schema in the JSON itself. When you specify converter-specific configurations, always use the key.converter. or value.converter. prefix. For example, to use JSON for the message payload, you’d specify the following:
+
+  - `key.converter`
+  - `value.converter`
+
+```console
+connect:
+    image: confluentinc/cp-kafka-connect-base:latest
+    hostname: connect
+    container_name: connect
+    depends_on:
+      - broker
+      - schema-registry
+      - couchbase
+    ports:
+      - "8083:8083"
+    environment:
+      ...
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      ...
+  connect:
+    …
+    command:
+        …
+        echo -e "\n--\n+> Creating Couchbase Sink Connector"
+        curl -s -X PUT -H  "Content-Type:application/json" http://localhost:8083/connectors/sink-couchbase-01/config \
+            -d '{
+                  …
+                  "topics": "raw-events",
+                  …
+        }'
+        …
+```
+
+### Setup Sink Connector with Avro Converter
+
+For Avro, you need to specify the Schema Registry.When you specify converter-specific configurations, always use the key.converter. or value.converter. prefix. For example, to use Avro for the message payload, you’d specify the following:
+        
+  - `key.converter`
+  - `value.converter`
+  - `value.converter.schemas.enable`
+  - `value.converter.schema.registry.url`
+
+
+```console
+connect:
+    ...
+    environment:
+      ...
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      ...
+  connect:
+    …
+    command:
+        …
+        echo -e "\n--\n+> Creating Couchbase Sink Connector"
+        curl -s -X PUT -H  "Content-Type:application/json" http://localhost:8083/connectors/sink-couchbase-01/config \
+            -d '{
+                  …
+                  "topics": "raw-events",
+                  …
+        }'
+        …
+```
+
 
 ### Ingesting Json Documents
+
+```console 
+connect:
+    image: confluentinc/cp-kafka-connect-base:latest
+    hostname: connect
+    container_name: connect
+    depends_on:
+      - broker
+      - schema-registry
+      - couchbase
+    ports:  
+      - "8083:8083"
+    environment:
+      ...
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      ...
+  connect:
+    …
+    command:
+        …
+        echo -e "\n--\n+> Creating Couchbase Sink Connector"
+        curl -s -X PUT -H  "Content-Type:application/json" http://localhost:8083/connectors/sink-couchbase-01/config \
+            -d '{
+                  …
+                  "topics": "raw-events",
+                  …
+        }'
+        …
+```
+
+or you can overwrite the specific properties values
+
+
 
 
 ### Ingesting Avro Data
