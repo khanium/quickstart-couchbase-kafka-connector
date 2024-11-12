@@ -106,6 +106,8 @@ What this means is that you can have data on a topic in Avro (for example), and 
 
 Remember, Kafka messages are just pairs of key/value bytes, and you need to specify the converter for both keys and value, using the key.converter and value.converter configuration setting. In some situations, you may use different converters for the key and the value.
 
+You can find more details in the following blog documentation link: [converters details](https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/)
+
 ### Setup SinkConnector with Json Converter
  For JSON, you need to specify if you want Kafka Connect to embed the schema in the JSON itself. When you specify converter-specific configurations, always use the key.converter. or value.converter. prefix. For example, to use JSON for the message payload, you’d specify the following:
 
