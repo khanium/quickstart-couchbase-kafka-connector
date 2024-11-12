@@ -103,11 +103,19 @@ To solve this problem, Kafka offers the Schema Registry, which allows you to spe
 
 ```console
 docker exec -it schema-registry /usr/bin/kafka-avro-console-producer \
-  --bootstrap-server localhost:9092 \
-  --topic example-topic \
+  --bootstrap-server broker:29092 \
+  --topic raw-events \
   --property value.schema='{"type":"record","name":"random_record","fields":[{"name":"hello","type":"string"}]}'
->{"hello": "world"}
 ```
+Then introduce the json document to be ingested, one per line as many you want and to exit push `Ctrl+C`: 
+
+```console
+{"hello": "world"}
+```
+
+You can verify the created document in your Couchbase Cluster:
+
+![Ingested Couchbase Document](doc/assets/ingestion.png)
 
 #### Java Random AVRO Generator Application Sample
   You can find a java random AVRO generator producer in the github [https://github.com/couchbaselabs/springboot-kafka-avro-producer](https://github.com/couchbaselabs/springboot-kafka-avro-producer) repository. By default, the AVRO Kafka Producer demo is using `src/main/resources/avro-schemas/OrderValue.avsc` avro schema to produce 20K documents into the Kafka localhost `raw-events` topic.
