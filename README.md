@@ -180,41 +180,10 @@ connect:
 
 ### Ingesting Json Documents
 
+TBD 
+
 ```console 
-connect:
-    image: confluentinc/cp-kafka-connect-base:latest
-    hostname: connect
-    container_name: connect
-    depends_on:
-      - broker
-      - schema-registry
-      - couchbase
-    ports:  
-      - "8083:8083"
-    environment:
-      ...
-      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
-      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
-      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
-      ...
-  connect:
-    …
-    command:
-        …
-        echo -e "\n--\n+> Creating Couchbase Sink Connector"
-        curl -s -X PUT -H  "Content-Type:application/json" http://localhost:8083/connectors/sink-couchbase-01/config \
-            -d '{
-                  …
-                  "topics": "raw-events",
-                  …
-        }'
-        …
 ```
-
-or you can overwrite the specific properties values
-
-
-
 
 ### Ingesting Avro Data
 
@@ -260,3 +229,8 @@ Note: Use a different kafka topic than our previous example. Alternatively, rest
 ```
 Caused by: org.apache.kafka.common.errors.InvalidConfigurationException: Schema being registered is incompatible with an earlier schema for subject "raw-events-value", details: [{errorType:'NAME_MISMATCH', description:'The name of the schema has changed (path '/name')', additionalInfo:'expected: random_record'}, {errorType:'READER_FIELD_MISSING_DEFAULT_VALUE', description:'The field 'orderID' at path '/fields/0' in the new schema has no default value and is missing in the old schema', additionalInfo:'orderID'}, {errorType:'TYPE_MISMATCH', description:'The type (path '/fields/1/type') of a field in the new schema does not match with the old schema', additionalInfo:'reader type: ENUM not compatible with writer type: RECORD'}, {errorType:'TYPE_MISMATCH', description:'The type (path '/fields/3/type') of a field in the new schema does not match with the old schema', additionalInfo:'reader type: ENUM not compatible with writer type: RECORD'}, {errorType:'READER_FIELD_MISSING_DEFAULT_VALUE', description:'The field 'isOrderPaid' at path '/fields/4' in the new schema has no default value and is missing in the old schema', additionalInfo:'isOrderPaid'}, {errorType:'READER_FIELD_MISSING_DEFAULT_VALUE', description:'The field 'totalCost' at path '/fields/5' in the new schema has no default value and is missing in the old schema', additionalInfo:'totalCost'}, {errorType:'READER_FIELD_MISSING_DEFAULT_VALUE', description:'The field 'orderItems' at path '/fields/6' in the new schema has no default value and is missing in the old schema', additionalInfo:'orderItems'}, {oldSchemaVersion: 1}, {oldSchema: '{"type":"record","name":"random_record","fields":[{"name":"hello","type":"string"}]}'}, {compatibility: 'BACKWARD'}]; error code: 409
 ```
+
+## References
+
+* [https://www.redpanda.com/guides/kafka-tutorial-kafka-console-producer](https://www.redpanda.com/guides/kafka-tutorial-kafka-console-producer)
+* [https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/](https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/)
